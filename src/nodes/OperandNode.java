@@ -1,4 +1,7 @@
-package parser;
+package nodes;
+
+import visitors.Visitable;
+import visitors.Visitor;
 
 public class OperandNode extends SyntaxNode implements Visitable {
 	

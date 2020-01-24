@@ -1,4 +1,9 @@
-package parser;
+package visitors;
+
+import nodes.BinOpNode;
+import nodes.OperandNode;
+import nodes.SyntaxNode;
+import nodes.UnaryOpNode;
 
 public class FirstVisitor implements Visitor {
 	

@@ -1,4 +1,8 @@
-package parser;
+package visitors;
+
+import nodes.BinOpNode;
+import nodes.OperandNode;
+import nodes.UnaryOpNode;
 
 public interface Visitor {
 	

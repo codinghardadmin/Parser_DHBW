@@ -5,10 +5,10 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import parser.BinOpNode;
-import parser.OperandNode;
-import parser.UnaryOpNode;
-import parser.Visitable;
+import nodes.BinOpNode;
+import nodes.OperandNode;
+import nodes.UnaryOpNode;
+import visitors.Visitable;
 
 class FirstVisitorTests {
 	

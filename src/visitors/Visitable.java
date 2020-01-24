@@ -1,4 +1,4 @@
-package parser;
+package visitors;
 
 public interface Visitable {
 	
