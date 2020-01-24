@@ -1,13 +1,20 @@
 package visitors;
 
+import java.util.ArrayList;
+
 import nodes.BinOpNode;
 import nodes.OperandNode;
+import nodes.SyntaxNode;
 import nodes.UnaryOpNode;
 
 public class SecondVisitor implements Visitor {
 	
-	public SecondVisitor(Visitable root) {
+	// Evtl. HashMap
+	private ArrayList<FollowposTableEntry> table;
+	
+	public SecondVisitor(Visitable root, int positions) {
 		DepthFirstIterator.traverse(root, this);
+		table = new ArrayList<FollowposTableEntry>();
 	}
 	
 	@Override
@@ -17,7 +24,19 @@ public class SecondVisitor implements Visitor {
 
 	@Override
 	public void visit(BinOpNode node) {
-		
+		switch (node.operator) {
+		case "*":
+			for (int nodepos : node.lastpos) {
+				
+			}
+			break;
+		case "+":
+			
+			break;
+
+		default:
+			throw new RuntimeException("Wrong Unary Symbol");
+	}
 	}
 
 	@Override
