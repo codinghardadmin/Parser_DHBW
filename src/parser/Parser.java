@@ -3,9 +3,9 @@ package parser;
 public class Parser {
 
 	private int position;
-	private String eingabe;
+	private final String eingabe;
 	
-	private void Parser(String eingabe) {
+	public Parser(String eingabe) {
 		this.eingabe = eingabe;
 		this.position = 0;
 	}
@@ -23,34 +23,90 @@ public class Parser {
 			throw new RuntimeException("Syntax error !");
 		}
 		
-		/*
-		case '(':
+		position++;
+	}
+	
+	public void Start() {
+		switch(eingabe.charAt(position)) {
+		case '#': 
+			match('#');
+			assertEndOfInput();
+			break;
+		case '(': 
 			match('(');
 			RegExp();
 			match(')');
 			match('#');
 			assertEndOfInput();
+			break;
+		default:
+			throw new RuntimeException("Syntax error !");
 		}
-		
-		match('#');
-		assertEndOfInput();
-		*/
-		
-		position++;
 	}
 	
-	/*
-	private void RegExp(char symbol) {
-		
+	public void RegExp() {
+		Term();
+		RE_();
 	}
-	*/
+	
+	private void RE_() {
+		switch(eingabe.charAt(position)) {
+		case '|': 
+			match('|');
+			Term();
+			RE_();
+			break;
+		}
+	}
+
+	private void Term() {
+		FactorTerm();
+	}
+	
+	private void FactorTerm() {
+		Elem();
+		HOp();
+	}
+	
+	private void HOp() {
+		switch(eingabe.charAt(position)) {
+		case '*': 
+			match('*');
+			break;
+		case '+': 
+			match('+');
+			break;
+		case '?': 
+			match('?');
+			break;
+		}
+	}
+	
+	private void Elem() {
+		if (eingabe.charAt(position) == '(') {
+			match('(');
+			RegExp();
+			match(')');
+		} else {
+			Alphanum();
+		}
+	}
+	
+	private void Alphanum() {
+		char check = eingabe.charAt(position);
+		if (Character.isLetterOrDigit(check)) {
+			match(check);
+		} else {
+			throw new RuntimeException("Syntax error !");
+		}
+	}
 	
 	//------------------------------------------------------------------
 	// 1. wird benoetigt bei der Regel Start -> '(' RegExp ')''#'
 	// 2. wird benoetigt bei der Regel Start -> '#'
 	// 3. wird sonst bei keiner anderen Regel benoetigt
 	//------------------------------------------------------------------
-	
+
 	private void assertEndOfInput() {
 		if (position < eingabe.length()) {
 			throw new RuntimeException(" No end of input reached !");
