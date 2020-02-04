@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Test;
 import nodes.SyntaxNode;
 import parser.Parser;
 import visitors.FirstVisitor;
+import visitors.FollowposTableEntry;
+import visitors.SecondVisitor;
 
 class ParserTests {
 	
@@ -21,10 +23,29 @@ class ParserTests {
 		
 		//Parser parse = new Parser("((a*)b*)#");
 		Parser parse = new Parser("((ab*a)|cd?)#");
-		parse = new Parser("((a|b)+(b|c)**d)#");
+		//parse = new Parser("((a|b)+(b|c)*d)#");
+		parse = new Parser("((a|b)+(b|c)*d)#");
+		
+		parse = new Parser("((a|b)*abb)#");
 		SyntaxNode node = parse.Start();
 		node.firstpos.clear();
-		new FirstVisitor(node);
+		FirstVisitor visitor1 = new FirstVisitor(node);
+		
+		SecondVisitor visitor2 = new SecondVisitor(node, 6);
+		
+		for (int index : visitor2.followposTableEntries.keySet()) {
+			FollowposTableEntry entry = visitor2.followposTableEntries.get(index);
+			
+			String s = "{";
+			for (int x : entry.followpos) {
+				s += " " + x;
+			}
+			s += "}";
+			
+			System.out.printf("Symbol: %s  Position: %s, FollowPosSet: %s", entry.symbol, entry.position, s);
+			System.out.println();
+		}
+		
 		System.out.println("aaaaaaaa");
 	}
 	
