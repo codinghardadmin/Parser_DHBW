@@ -1,9 +1,15 @@
 package parser;
 
+import nodes.BinOpNode;
+import nodes.OperandNode;
+import nodes.SyntaxNode;
+import nodes.UnaryOpNode;
+
 public class Parser {
 
 	private int position;
 	private final String eingabe;
+	private SyntaxNode x;
 	
 	public Parser(String eingabe) {
 		this.eingabe = eingabe;
@@ -23,82 +29,116 @@ public class Parser {
 			throw new RuntimeException("Syntax error !");
 		}
 		
+		System.out.println("Matched: " + symbol);
+		
 		position++;
 	}
 	
-	public void Start() {
+	public SyntaxNode Start() {
 		switch(eingabe.charAt(position)) {
 		case '#': 
 			match('#');
 			assertEndOfInput();
-			break;
+			
+			return new OperandNode("#");
+			
 		case '(': 
 			match('(');
-			RegExp();
+			SyntaxNode leaf = new OperandNode("#");
+			SyntaxNode regexpparam = null;
+			SyntaxNode regexpreturn = RegExp(regexpparam);
+			SyntaxNode root = new BinOpNode("°", regexpreturn , leaf);
 			match(')');
 			match('#');
 			assertEndOfInput();
-			break;
+			x = root;
+			return root;
 		default:
 			throw new RuntimeException("Syntax error !");
 		}
 	}
 	
-	public void RegExp() {
-		Term();
-		RE_();
+	public SyntaxNode RegExp(SyntaxNode p) {
+		SyntaxNode termpa = null;
+		SyntaxNode ret = Term(termpa);
+		return RE_(ret);
 	}
 	
-	private void RE_() {
+	private SyntaxNode RE_(SyntaxNode p) {
 		switch(eingabe.charAt(position)) {
 		case '|': 
 			match('|');
-			Term();
-			RE_();
-			break;
+			SyntaxNode termparam = null;
+			SyntaxNode termret = Term(termparam);
+			SyntaxNode root = new BinOpNode("|", p, termret);
+			return RE_(root);
+			//break;
 		}
+		
+		return p;
 	}
 
-	private void Term() {
-		FactorTerm();
+	private SyntaxNode Term(SyntaxNode pa) {
+		if (eingabe.charAt(position) == '|' || eingabe.charAt(position) == ')') {
+			return pa;
+		} else {
+			SyntaxNode factorparam = null;
+			SyntaxNode factorret = Factor(factorparam);
+			SyntaxNode paramforterm;
+			if (pa != null) {
+				SyntaxNode root = new BinOpNode("°", pa, factorret);
+				paramforterm = root;
+			} else {
+				paramforterm = factorret;
+			}
+			return Term(paramforterm);
+		}
 	}
 	
-	private void FactorTerm() {
-		Elem();
-		HOp();
+	private SyntaxNode Factor(SyntaxNode pa) {
+		SyntaxNode p = null;
+		SyntaxNode ret = Elem(p);
+		return HOp(ret);
 	}
 	
-	private void HOp() {
+	private SyntaxNode HOp(SyntaxNode p) {
 		switch(eingabe.charAt(position)) {
 		case '*': 
 			match('*');
-			break;
+			return new UnaryOpNode("*", p);
 		case '+': 
 			match('+');
-			break;
+			return new UnaryOpNode("+", p);
 		case '?': 
 			match('?');
-			break;
+			return new UnaryOpNode("?", p);
 		}
+		return p; // Unsicher
 	}
 	
-	private void Elem() {
+	private SyntaxNode Elem(SyntaxNode pa) {
 		if (eingabe.charAt(position) == '(') {
 			match('(');
-			RegExp();
+			SyntaxNode p = null;
+			SyntaxNode ret = RegExp(p);
 			match(')');
+			return ret;
 		} else {
-			Alphanum();
+			SyntaxNode p = null;
+			return Alphanum(p);
 		}
 	}
 	
-	private void Alphanum() {
+	private SyntaxNode Alphanum(SyntaxNode parameter) {
 		char check = eingabe.charAt(position);
+		System.out.println(check);
 		if (Character.isLetterOrDigit(check)) {
 			match(check);
 		} else {
 			throw new RuntimeException("Syntax error !");
 		}
+		
+		return new OperandNode(String.valueOf(check));
 	}
 	
 	//------------------------------------------------------------------

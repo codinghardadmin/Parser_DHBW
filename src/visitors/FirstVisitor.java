@@ -10,8 +10,8 @@ public class FirstVisitor implements Visitor {
 	private int positionCounter;
 	
 	public FirstVisitor(Visitable root) {
-		DepthFirstIterator.traverse(root, this);
 		positionCounter = 1;
+		DepthFirstIterator.traverse(root, this);
 	}
 	
 	@Override
@@ -49,7 +49,7 @@ public class FirstVisitor implements Visitor {
 				node.lastpos.addAll(leftNode.lastpos);
 				node.lastpos.addAll(rightNode.lastpos);
 				break;
-			case "*":
+			case "°":
 				node.nullable = leftNode.nullable && rightNode.nullable;
 				
 				if (leftNode.nullable) {

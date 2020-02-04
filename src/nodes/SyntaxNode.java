@@ -2,7 +2,9 @@ package nodes;
 import java.util.HashSet;
 import java.util.Set;
 
-public abstract class SyntaxNode {
+import visitors.Visitable;
+
+public abstract class SyntaxNode implements Visitable {
 	
 	public Boolean nullable;
 	public final Set<Integer> firstpos = new HashSet<>();
