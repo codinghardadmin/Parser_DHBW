@@ -38,15 +38,12 @@ public class Parser {
 		case '#': 
 			match('#');
 			assertEndOfInput();
-			
 			return new OperandNode("#");
-			
 		case '(': 
 			match('(');
 			Visitable leaf = new OperandNode("#");
-			Visitable regexpparam = null;
-			Visitable regexpreturn = RegExp(regexpparam);
-			Visitable root = new BinOpNode("°", regexpreturn , leaf);
+			Visitable ret = RegExp(null);
+			Visitable root = new BinOpNode("°", ret , leaf);
 			match(')');
 			match('#');
 			assertEndOfInput();
@@ -56,74 +53,65 @@ public class Parser {
 		}
 	}
 	
-	public Visitable RegExp(Visitable p) {
-		Visitable termpa = null;
-		Visitable ret = Term(termpa);
+	public Visitable RegExp(Visitable parameter) {
+		Visitable ret = Term(null);
 		return RE_(ret);
 	}
 	
-	private Visitable RE_(Visitable p) {
+	private Visitable RE_(Visitable parameter) {
 		switch(eingabe.charAt(position)) {
 		case '|': 
 			match('|');
-			Visitable termparam = null;
-			Visitable termret = Term(termparam);
-			Visitable root = new BinOpNode("|", p, termret);
+			Visitable ret = Term(null);
+			Visitable root = new BinOpNode("|", parameter, ret);
 			return RE_(root);
-			//break;
 		}
-		
-		return p;
+		return parameter;
 	}
 
-	private Visitable Term(Visitable pa) {
+	private Visitable Term(Visitable parameter) {
 		if (eingabe.charAt(position) == '|' || eingabe.charAt(position) == ')') {
-			return pa;
+			return parameter;
 		} else {
-			Visitable factorparam = null;
-			Visitable factorret = Factor(factorparam);
-			Visitable paramforterm;
-			if (pa != null) {
-				Visitable root = new BinOpNode("°", pa, factorret);
-				paramforterm = root;
+			Visitable ret = Factor(null);
+			Visitable paramforterm = null;
+			if (parameter != null) {
+				paramforterm = new BinOpNode("°", parameter, ret);
 			} else {
-				paramforterm = factorret;
+				paramforterm = ret;
 			}
 			return Term(paramforterm);
 		}
 	}
 	
-	private Visitable Factor(Visitable pa) {
-		Visitable p = null;
-		Visitable ret = Elem(p);
+	private Visitable Factor(Visitable parameter) {
+		Visitable ret = Elem(null);
 		return HOp(ret);
 	}
 	
-	private Visitable HOp(Visitable p) {
+	private Visitable HOp(Visitable parameter) {
 		switch(eingabe.charAt(position)) {
 		case '*': 
 			match('*');
-			return new UnaryOpNode("*", p);
+			return new UnaryOpNode("*", parameter);
 		case '+': 
 			match('+');
-			return new UnaryOpNode("+", p);
+			return new UnaryOpNode("+", parameter);
 		case '?': 
 			match('?');
-			return new UnaryOpNode("?", p);
+			return new UnaryOpNode("?", parameter);
 		}
-		return p; // Unsicher
+		return parameter;
 	}
 	
-	private Visitable Elem(Visitable pa) {
+	private Visitable Elem(Visitable parameter) {
 		if (eingabe.charAt(position) == '(') {
 			match('(');
-			Visitable p = null;
-			Visitable ret = RegExp(p);
+			Visitable ret = RegExp(null);
 			match(')');
 			return ret;
 		} else {
-			Visitable p = null;
-			return Alphanum(p);
+			return Alphanum(null);
 		}
 	}
 	
