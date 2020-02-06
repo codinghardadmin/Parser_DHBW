@@ -2,14 +2,13 @@ package parser;
 
 import nodes.BinOpNode;
 import nodes.OperandNode;
-import nodes.SyntaxNode;
 import nodes.UnaryOpNode;
+import visitors.Visitable;
 
 public class Parser {
 
 	private int position;
 	private final String eingabe;
-	private SyntaxNode x;
 	
 	public Parser(String eingabe) {
 		this.eingabe = eingabe;
@@ -34,7 +33,7 @@ public class Parser {
 		position++;
 	}
 	
-	public SyntaxNode Start() {
+	public Visitable Start() {
 		switch(eingabe.charAt(position)) {
 		case '#': 
 			match('#');
@@ -44,33 +43,32 @@ public class Parser {
 			
 		case '(': 
 			match('(');
-			SyntaxNode leaf = new OperandNode("#");
-			SyntaxNode regexpparam = null;
-			SyntaxNode regexpreturn = RegExp(regexpparam);
-			SyntaxNode root = new BinOpNode("°", regexpreturn , leaf);
+			Visitable leaf = new OperandNode("#");
+			Visitable regexpparam = null;
+			Visitable regexpreturn = RegExp(regexpparam);
+			Visitable root = new BinOpNode("°", regexpreturn , leaf);
 			match(')');
 			match('#');
 			assertEndOfInput();
-			x = root;
 			return root;
 		default:
 			throw new RuntimeException("Syntax error !");
 		}
 	}
 	
-	public SyntaxNode RegExp(SyntaxNode p) {
-		SyntaxNode termpa = null;
-		SyntaxNode ret = Term(termpa);
+	public Visitable RegExp(Visitable p) {
+		Visitable termpa = null;
+		Visitable ret = Term(termpa);
 		return RE_(ret);
 	}
 	
-	private SyntaxNode RE_(SyntaxNode p) {
+	private Visitable RE_(Visitable p) {
 		switch(eingabe.charAt(position)) {
 		case '|': 
 			match('|');
-			SyntaxNode termparam = null;
-			SyntaxNode termret = Term(termparam);
-			SyntaxNode root = new BinOpNode("|", p, termret);
+			Visitable termparam = null;
+			Visitable termret = Term(termparam);
+			Visitable root = new BinOpNode("|", p, termret);
 			return RE_(root);
 			//break;
 		}
@@ -78,15 +76,15 @@ public class Parser {
 		return p;
 	}
 
-	private SyntaxNode Term(SyntaxNode pa) {
+	private Visitable Term(Visitable pa) {
 		if (eingabe.charAt(position) == '|' || eingabe.charAt(position) == ')') {
 			return pa;
 		} else {
-			SyntaxNode factorparam = null;
-			SyntaxNode factorret = Factor(factorparam);
-			SyntaxNode paramforterm;
+			Visitable factorparam = null;
+			Visitable factorret = Factor(factorparam);
+			Visitable paramforterm;
 			if (pa != null) {
-				SyntaxNode root = new BinOpNode("°", pa, factorret);
+				Visitable root = new BinOpNode("°", pa, factorret);
 				paramforterm = root;
 			} else {
 				paramforterm = factorret;
@@ -95,13 +93,13 @@ public class Parser {
 		}
 	}
 	
-	private SyntaxNode Factor(SyntaxNode pa) {
-		SyntaxNode p = null;
-		SyntaxNode ret = Elem(p);
+	private Visitable Factor(Visitable pa) {
+		Visitable p = null;
+		Visitable ret = Elem(p);
 		return HOp(ret);
 	}
 	
-	private SyntaxNode HOp(SyntaxNode p) {
+	private Visitable HOp(Visitable p) {
 		switch(eingabe.charAt(position)) {
 		case '*': 
 			match('*');
@@ -116,20 +114,20 @@ public class Parser {
 		return p; // Unsicher
 	}
 	
-	private SyntaxNode Elem(SyntaxNode pa) {
+	private Visitable Elem(Visitable pa) {
 		if (eingabe.charAt(position) == '(') {
 			match('(');
-			SyntaxNode p = null;
-			SyntaxNode ret = RegExp(p);
+			Visitable p = null;
+			Visitable ret = RegExp(p);
 			match(')');
 			return ret;
 		} else {
-			SyntaxNode p = null;
+			Visitable p = null;
 			return Alphanum(p);
 		}
 	}
 	
-	private SyntaxNode Alphanum(SyntaxNode parameter) {
+	private Visitable Alphanum(Visitable parameter) {
 		char check = eingabe.charAt(position);
 		System.out.println(check);
 		if (Character.isLetterOrDigit(check)) {

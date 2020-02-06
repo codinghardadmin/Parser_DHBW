@@ -8,6 +8,7 @@ import parser.Parser;
 import visitors.FirstVisitor;
 import visitors.FollowposTableEntry;
 import visitors.SecondVisitor;
+import visitors.Visitable;
 
 class ParserTests {
 	
@@ -27,8 +28,8 @@ class ParserTests {
 		parse = new Parser("((a|b)+(b|c)*d)#");
 		
 		parse = new Parser("((a|b)*abb)#");
-		SyntaxNode node = parse.Start();
-		node.firstpos.clear();
+		Visitable node = parse.Start();
+		//node.firstpos.clear();
 		FirstVisitor visitor1 = new FirstVisitor(node);
 		
 		SecondVisitor visitor2 = new SecondVisitor(node, 6);
