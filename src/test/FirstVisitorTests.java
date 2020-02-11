@@ -8,7 +8,10 @@ import org.junit.jupiter.api.Test;
 import nodes.BinOpNode;
 import nodes.OperandNode;
 import nodes.UnaryOpNode;
+import parser.Parser;
+import visitors.FirstVisitor;
 import visitors.Visitable;
+import visitors.Visitor;
 
 class FirstVisitorTests {
 	
@@ -21,15 +24,53 @@ class FirstVisitorTests {
 	@Test
 	@DisplayName("Vergleich zwischen vorgegebenen und erstelltem Baum")
 	void compareAST() {
-		String regex = "((a|b)*abb)#";
+		OperandNode nodeA = new OperandNode("a");
+		nodeA.nullable = false;
+		nodeA.position = 1;
+		nodeA.firstpos.add(1);
+		nodeA.lastpos.add(1);
 		
-		// Fester Baum ast1
-		Visitable ast1 = null;
+		OperandNode nodeB = new OperandNode("b");
+		nodeB.nullable = false;
+		nodeB.position = 2;
+		nodeB.firstpos.add(2);
+		nodeB.lastpos.add(2);
 		
-		// Von Visitor besuchter Baum
-		Visitable ast2 = null;
+		OperandNode nodeEnd = new OperandNode("#");
+		nodeB.nullable = false;
+		nodeEnd.position = 3;
+		nodeB.firstpos.add(3);
+		nodeB.lastpos.add(3);
 		
-		assertTrue(equals(ast1, ast2));
+		BinOpNode binNode = new BinOpNode("|", nodeA, nodeB);
+		binNode.nullable = false;
+		binNode.firstpos.add(1);
+		binNode.firstpos.add(2);
+		binNode.lastpos.add(1);
+		binNode.lastpos.add(2);
+		
+		UnaryOpNode unaryNode = new UnaryOpNode("*", binNode);
+		unaryNode.nullable = true;
+		unaryNode.firstpos.add(1);
+		unaryNode.firstpos.add(2);
+		unaryNode.lastpos.add(1);
+		unaryNode.lastpos.add(2);
+		
+		BinOpNode root = new BinOpNode("°", unaryNode, nodeEnd);
+		root.nullable = false;
+		root.firstpos.add(1);
+		root.firstpos.add(2);
+		root.firstpos.add(3);
+		root.lastpos.add(3);
+		
+		String regex = "((a|b)*)#";
+		Parser parser = new Parser(regex);
+		Visitable parserRoot = parser.Start();
+		
+		FirstVisitor visitor1 = new FirstVisitor();
+		visitor1.startVisitor(parserRoot);
+		
+		assertTrue(equals(root, parserRoot));
 		
 	}
 
