@@ -11,7 +11,6 @@ import nodes.UnaryOpNode;
 import parser.Parser;
 import visitors.FirstVisitor;
 import visitors.Visitable;
-import visitors.Visitor;
 
 class FirstVisitorTests {
 	
@@ -22,7 +21,7 @@ class FirstVisitorTests {
 	 */
 
 	@Test
-	@DisplayName("Vergleich zwischen vorgegebenen und erstelltem Baum")
+	@DisplayName("FirstVisitor: Vergleich zwischen vorgegebenen und erstelltem Baum")
 	void compareAST() {
 		OperandNode nodeA = new OperandNode("a");
 		nodeA.nullable = false;
@@ -37,10 +36,10 @@ class FirstVisitorTests {
 		nodeB.lastpos.add(2);
 		
 		OperandNode nodeEnd = new OperandNode("#");
-		nodeB.nullable = false;
+		nodeEnd.nullable = false;
 		nodeEnd.position = 3;
-		nodeB.firstpos.add(3);
-		nodeB.lastpos.add(3);
+		nodeEnd.firstpos.add(3);
+		nodeEnd.lastpos.add(3);
 		
 		BinOpNode binNode = new BinOpNode("|", nodeA, nodeB);
 		binNode.nullable = false;
@@ -70,7 +69,9 @@ class FirstVisitorTests {
 		FirstVisitor visitor1 = new FirstVisitor();
 		visitor1.startVisitor(parserRoot);
 		
-		assertTrue(equals(root, parserRoot));
+		boolean equals = equals(root, parserRoot);
+		
+		assertTrue(equals);
 		
 	}
 
@@ -92,12 +93,14 @@ class FirstVisitorTests {
 		if (expected.getClass() == UnaryOpNode.class) {
 			UnaryOpNode op1 = (UnaryOpNode) expected;
 			UnaryOpNode op2 = (UnaryOpNode) visited;
+			
 			return op1.nullable.equals(op2.nullable) && op1.firstpos.equals(op2.firstpos)
 					&& op1.lastpos.equals(op2.lastpos) && equals(op1.subNode, op2.subNode);
 		}
 		if (expected.getClass() == OperandNode.class) {
 			OperandNode op1 = (OperandNode) expected;
 			OperandNode op2 = (OperandNode) visited;
+			
 			return op1.nullable.equals(op2.nullable) && op1.firstpos.equals(op2.firstpos)
 					&& op1.lastpos.equals(op2.lastpos);
 		}
