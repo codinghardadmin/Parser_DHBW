@@ -9,7 +9,9 @@ public class FirstVisitor implements Visitor {
 	
 	private int positionCounter;
 	
-	public FirstVisitor(Visitable root) {
+	public FirstVisitor() { }
+	
+	public void startVisitor(Visitable root) {
 		positionCounter = 1;
 		DepthFirstIterator.traverse(root, this);
 	}

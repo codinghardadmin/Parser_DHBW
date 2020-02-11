@@ -21,6 +21,8 @@ class FirstVisitorTests {
 	@Test
 	@DisplayName("Vergleich zwischen vorgegebenen und erstelltem Baum")
 	void compareAST() {
+		String regex = "((a|b)*abb)#";
+		
 		// Fester Baum ast1
 		Visitable ast1 = null;
 		

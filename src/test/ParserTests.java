@@ -1,53 +1,57 @@
 package test;
 
+import static org.junit.Assert.assertTrue;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import nodes.SyntaxNode;
+import nodes.BinOpNode;
+import nodes.OperandNode;
+import nodes.UnaryOpNode;
 import parser.Parser;
-import visitors.FirstVisitor;
-import visitors.FollowposTableEntry;
-import visitors.SecondVisitor;
 import visitors.Visitable;
 
 class ParserTests {
 	
 	/*
 	 * JUnit 5 in Eclipse
-	 * SecondVisitorTests
+	 * ParserTests
 	 * 
 	 */
 
 	@Test
-	@DisplayName("Test SecondVisitorTests")
-	void test() {
+	@DisplayName("Test Parser correct")
+	void testcorrect() {
+		String regex = "((a|b)*)#";
+		Parser parser = new Parser(regex);
+		Visitable tree1 = parser.Start();
 		
-		//Parser parse = new Parser("((a*)b*)#");
-		Parser parse = new Parser("((ab*a)|cd?)#");
-		//parse = new Parser("((a|b)+(b|c)*d)#");
-		parse = new Parser("((a|b)+(b|c)*d)#");
 		
-		parse = new Parser("((a|b)*abb)#");
-		Visitable node = parse.Start();
-		//node.firstpos.clear();
-		FirstVisitor visitor1 = new FirstVisitor(node);
+		Visitable tree2 = new BinOpNode("°", 
+							new UnaryOpNode("*", 
+									new BinOpNode("|", 
+											new OperandNode("a"), 
+											new OperandNode("b"))), 
+						new OperandNode("#"));
 		
-		SecondVisitor visitor2 = new SecondVisitor(node, 6);
+		assertTrue(Parser.equals(tree1, tree2));
+	}
+	
+	@Test
+	@DisplayName("Test Parser fail")
+	void testfail() {
+		boolean f = false;
 		
-		for (int index : visitor2.followposTableEntries.keySet()) {
-			FollowposTableEntry entry = visitor2.followposTableEntries.get(index);
-			
-			String s = "{";
-			for (int x : entry.followpos) {
-				s += " " + x;
-			}
-			s += "}";
-			
-			System.out.printf("Symbol: %s  Position: %s, FollowPosSet: %s", entry.symbol, entry.position, s);
-			System.out.println();
+		String regex = "((a||b)*)#";
+		Parser parser = new Parser(regex);
+		
+		try {
+			parser.Start();
+		} catch (RuntimeException ex) {
+			f = true;
 		}
 		
-		System.out.println("aaaaaaaa");
+		assertTrue(f);
 	}
 	
 }

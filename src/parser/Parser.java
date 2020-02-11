@@ -65,14 +65,15 @@ public class Parser {
 			Visitable ret = Term(null);
 			Visitable root = new BinOpNode("|", parameter, ret);
 			return RE_(root);
+		case ')':
+			return parameter;
+		default:
+			throw new RuntimeException("Syntax error !");
 		}
-		return parameter;
 	}
 
 	private Visitable Term(Visitable parameter) {
-		if (eingabe.charAt(position) == '|' || eingabe.charAt(position) == ')') {
-			return parameter;
-		} else {
+		if (Character.isLetterOrDigit(eingabe.charAt(position)) || eingabe.charAt(position) == '(') {
 			Visitable ret = Factor(null);
 			Visitable paramforterm = null;
 			if (parameter != null) {
@@ -81,27 +82,40 @@ public class Parser {
 				paramforterm = ret;
 			}
 			return Term(paramforterm);
+		} else if (eingabe.charAt(position) == '|' || eingabe.charAt(position) == ')') {
+			return parameter;
+		} else {
+			throw new RuntimeException("Syntax error !");
 		}
 	}
 	
 	private Visitable Factor(Visitable parameter) {
-		Visitable ret = Elem(null);
-		return HOp(ret);
+		if (Character.isLetterOrDigit(eingabe.charAt(position)) || eingabe.charAt(position) == '(') {
+			Visitable ret = Elem(null);
+			return HOp(ret);
+		} else {
+			throw new RuntimeException("Syntax error !");
+		}
 	}
 	
 	private Visitable HOp(Visitable parameter) {
-		switch(eingabe.charAt(position)) {
-		case '*': 
+		if (eingabe.charAt(position) == '*') {
 			match('*');
 			return new UnaryOpNode("*", parameter);
-		case '+': 
+		} else if (eingabe.charAt(position) == '+') {
 			match('+');
 			return new UnaryOpNode("+", parameter);
-		case '?': 
+		} else if (eingabe.charAt(position) == '?') {
 			match('?');
 			return new UnaryOpNode("?", parameter);
+		} else if (Character.isLetterOrDigit(eingabe.charAt(position)) || 
+				eingabe.charAt(position) == '(' || 
+				eingabe.charAt(position) == '|' || 
+				eingabe.charAt(position) == ')') {
+			return parameter;
+		} else {
+			throw new RuntimeException("Syntax error !");
 		}
-		return parameter;
 	}
 	
 	private Visitable Elem(Visitable parameter) {
@@ -110,14 +124,16 @@ public class Parser {
 			Visitable ret = RegExp(null);
 			match(')');
 			return ret;
-		} else {
+		} else if (Character.isLetterOrDigit(eingabe.charAt(position))) {
 			return Alphanum(null);
+		} else {
+			throw new RuntimeException("Syntax error !");
 		}
 	}
 	
 	private Visitable Alphanum(Visitable parameter) {
 		char check = eingabe.charAt(position);
-		System.out.println(check);
+		//System.out.println(check);
 		if (Character.isLetterOrDigit(check)) {
 			match(check);
 		} else {
@@ -137,5 +153,41 @@ public class Parser {
 		if (position < eingabe.length()) {
 			throw new RuntimeException(" No end of input reached !");
 		}
+	}
+	
+	public static boolean equals(Visitable v1, Visitable v2) {
+		if (v1 == v2)
+			return true;
+		
+		if (v1 == null)
+			return false;
+		
+		if (v2 == null)
+			return false;
+		
+		if (v1.getClass() != v2.getClass())
+			return false;
+		
+		if (v1.getClass() == OperandNode.class) {
+			OperandNode op1 = (OperandNode) v1;
+			OperandNode op2 = (OperandNode) v2;
+			return op1.position == op2.position && op1.symbol.equals(op2.symbol);
+		}
+		
+		if (v1.getClass() == UnaryOpNode.class) {
+			UnaryOpNode op1 = (UnaryOpNode) v1;
+			UnaryOpNode op2 = (UnaryOpNode) v2;
+			return op1.operator.equals(op2.operator) && equals(op1.subNode, op2.subNode);
+		}
+		
+		if (v1.getClass() == BinOpNode.class) {
+			BinOpNode op1 = (BinOpNode) v1;
+			BinOpNode op2 = (BinOpNode) v2;
+			return op1.operator.equals(op2.operator) &&
+			equals(op1.left, op2.left) &&
+			equals(op1.right, op2.right);
+		}
+		
+		throw new IllegalStateException("Ungueltiger Knotentyp");
 	}
 }

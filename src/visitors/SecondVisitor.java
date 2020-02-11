@@ -12,8 +12,11 @@ public class SecondVisitor implements Visitor {
 	
 	public SortedMap<Integer, FollowposTableEntry> followposTableEntries = new TreeMap<>();
 	
-	public SecondVisitor(Visitable root, int positions) {
+	public SecondVisitor() { }
+	
+	public SortedMap<Integer, FollowposTableEntry> startVisitor(Visitable root) {
 		DepthFirstIterator.traverse(root, this);
+		return followposTableEntries;
 	}
 	
 	@Override
@@ -31,14 +34,7 @@ public class SecondVisitor implements Visitor {
 			for (int nodepos : leftNode.lastpos) {
 				followposTableEntries.get(nodepos).followpos.addAll(rightNode.firstpos);
 			}
-			break;
-		case "+":
-			
-			break;
-
-		default:
-			//throw new RuntimeException("Wrong Unary Symbol");
-	}
+		}
 	}
 
 	@Override
@@ -46,17 +42,12 @@ public class SecondVisitor implements Visitor {
 		SyntaxNode subNode = (SyntaxNode)node.subNode;
 		
 		switch (node.operator) {
+			case "+":
 			case "*":
 				for (int nodepos : subNode.lastpos) {
 					followposTableEntries.get(nodepos).followpos.addAll(subNode.firstpos);
 				}
 				break;
-			case "+":
-				for (int nodepos : subNode.lastpos) {
-					followposTableEntries.get(nodepos).followpos.addAll(subNode.firstpos);
-				}
-				break;
-
 			default:
 				throw new RuntimeException("Wrong Unary Symbol");
 		}
