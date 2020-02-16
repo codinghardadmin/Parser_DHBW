@@ -21,13 +21,14 @@ class ParserTests {
 
 	@Test
 	@DisplayName("Test Parser correct")
-	void testcorrect() {
+	void testCorrect() {
+		// ((a|b)*)#
 		String regex = "((a|b)*)#";
 		Parser parser = new Parser(regex);
 		Visitable tree1 = parser.Start();
 		
 		
-		Visitable tree2 = new BinOpNode("°", 
+		Visitable tree2 = new BinOpNode("Â°", 
 							new UnaryOpNode("*", 
 									new BinOpNode("|", 
 											new OperandNode("a"), 
@@ -39,10 +40,10 @@ class ParserTests {
 	
 	@Test
 	@DisplayName("Test Parser fail")
-	void testfail() {
+	void testFail() {
 		boolean f = false;
 		
-		String regex = "((a||b)*)#";
+		String regex = "((a|b)**)#";
 		Parser parser = new Parser(regex);
 		
 		try {

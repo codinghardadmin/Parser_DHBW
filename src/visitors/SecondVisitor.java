@@ -30,7 +30,7 @@ public class SecondVisitor implements Visitor {
 		SyntaxNode rightNode = (SyntaxNode)node.right;
 		System.out.println(node.operator);
 		switch (node.operator) {
-		case "°":
+		case "Â°":
 			for (int nodepos : leftNode.lastpos) {
 				followposTableEntries.get(nodepos).followpos.addAll(rightNode.firstpos);
 			}

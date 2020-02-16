@@ -23,6 +23,7 @@ class FirstVisitorTests {
 	@Test
 	@DisplayName("FirstVisitor: Vergleich zwischen vorgegebenen und erstelltem Baum")
 	void compareAST() {
+		// ((a|b)*)#
 		OperandNode nodeA = new OperandNode("a");
 		nodeA.nullable = false;
 		nodeA.position = 1;
@@ -55,7 +56,7 @@ class FirstVisitorTests {
 		unaryNode.lastpos.add(1);
 		unaryNode.lastpos.add(2);
 		
-		BinOpNode root = new BinOpNode("°", unaryNode, nodeEnd);
+		BinOpNode root = new BinOpNode("Â°", unaryNode, nodeEnd);
 		root.nullable = false;
 		root.firstpos.add(1);
 		root.firstpos.add(2);

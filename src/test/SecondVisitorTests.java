@@ -24,7 +24,8 @@ class SecondVisitorTests {
 
 	@Test
 	@DisplayName("SecondVisitorTest: FollowPosEntry Tabelle Vergleich")
-	void test() {
+	void secondVisitorTest() {
+		// ((a|b)*)#
 		OperandNode nodeA = new OperandNode("a");
 		nodeA.nullable = false;
 		nodeA.position = 1;
@@ -57,7 +58,7 @@ class SecondVisitorTests {
 		unaryNode.lastpos.add(1);
 		unaryNode.lastpos.add(2);
 		
-		BinOpNode root = new BinOpNode("°", unaryNode, nodeEnd);
+		BinOpNode root = new BinOpNode("Â°", unaryNode, nodeEnd);
 		root.nullable = false;
 		root.firstpos.add(1);
 		root.firstpos.add(2);

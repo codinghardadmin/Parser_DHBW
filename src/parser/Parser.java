@@ -43,7 +43,7 @@ public class Parser {
 			match('(');
 			Visitable leaf = new OperandNode("#");
 			Visitable ret = RegExp(null);
-			Visitable root = new BinOpNode("°", ret , leaf);
+			Visitable root = new BinOpNode("Â°", ret , leaf);
 			match(')');
 			match('#');
 			assertEndOfInput();
@@ -77,7 +77,7 @@ public class Parser {
 			Visitable ret = Factor(null);
 			Visitable paramforterm = null;
 			if (parameter != null) {
-				paramforterm = new BinOpNode("°", parameter, ret);
+				paramforterm = new BinOpNode("Â°", parameter, ret);
 			} else {
 				paramforterm = ret;
 			}

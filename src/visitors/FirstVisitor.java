@@ -51,7 +51,7 @@ public class FirstVisitor implements Visitor {
 				node.lastpos.addAll(leftNode.lastpos);
 				node.lastpos.addAll(rightNode.lastpos);
 				break;
-			case "°":
+			case "Â°":
 				node.nullable = leftNode.nullable && rightNode.nullable;
 				
 				if (leftNode.nullable) {

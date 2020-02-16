@@ -18,41 +18,29 @@ class CompleteTests {
 	
 	/*
 	 * JUnit 5 in Eclipse
-	 * SecondVisitorTests
+	 * CompleteTests
 	 * 
 	 */
 
 	@Test
 	@DisplayName("Test: Complete Test")
 	void test() {
+		// ((a|b)*abb)#
 		
+		// Parser und AST erstellen
 		Parser parser;
 		parser = new Parser("((a|b)*abb)#");
 		Visitable root = parser.Start();
 		
-		
+		// FirstVisitor durchwandert AST
 		FirstVisitor visitor1 = new FirstVisitor();
 		visitor1.startVisitor(root);
 		
-		
+		// SecondVisitor erstellt FollowPosTabelle
 		SecondVisitor visitor2 = new SecondVisitor();
 		SortedMap<Integer, FollowposTableEntry> followPosTableEntries = visitor2.startVisitor(root);
 		
-		System.out.println("ACTUAL: ");
-		for (int index : followPosTableEntries.keySet()) {
-			FollowposTableEntry entry = followPosTableEntries.get(index);
-			
-			String s = "{";
-			for (int x : entry.followpos) {
-				s += " " + x;
-			}
-			s += " }";
-			
-			System.out.printf("Symbol: %s  Position: %s, FollowPosSet: %s", entry.symbol, entry.position, s);
-			System.out.println();
-		}
-		System.out.println();
-		
+		// Erwartete Tabelle erstellen
 		SortedMap<Integer, FollowposTableEntry> expected = new TreeMap<Integer, FollowposTableEntry>();
 		
 		FollowposTableEntry entry1 = new FollowposTableEntry(1, "a");
@@ -83,20 +71,8 @@ class CompleteTests {
 		expected.put(5, entry5);
 		expected.put(6, entry6);
 		
-		System.out.println("EXPECTED: ");
-		for (int index : expected.keySet()) {
-			FollowposTableEntry entry = expected.get(index);
-			
-			String s = "{";
-			for (int x : entry.followpos) {
-				s += " " + x;
-			}
-			s += " }";
-			
-			System.out.printf("Symbol: %s  Position: %s, FollowPosSet: %s", entry.symbol, entry.position, s);
-			System.out.println();
-		}
 		
+		// Erwartete und erzeugt Tabelle vergleichen. Wenn gleich, ist der Test erfolgreich
 		assertEquals(expected, followPosTableEntries);
 	}
 	
